@@ -80,4 +80,4 @@ instead of transient application state.
 ## Links
 
 - Source: https://github.com/nexicturbo/proofframe
-- Live app: pending deployment URL
+- Live app: https://proofframe-control.nexicturbo.chatgpt.site

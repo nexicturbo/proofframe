@@ -29,8 +29,19 @@ The app runs at `http://localhost:3000`.
 ## Validation
 
 ```bash
+npm ci
 npm test
+
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
+python services/proofframe_pipeline.py
 ```
+
+The Python command runs the complete three-attempt Genblaze loop in clearly
+labeled fixture mode when provider and B2 credentials are absent. It verifies
+the parent-linked manifest chain and reports `b2_released: false` rather than
+pretending that an upload occurred.
 
 ## Architecture
 
@@ -39,6 +50,7 @@ npm test
 - `services/b2_release.py` — content-addressed Backblaze B2 release sink
 - `.openai/hosting.json` — Sites deployment metadata
 
-The public UI is deployed as a Cloudflare Worker-compatible vinext app. Runtime
-media credentials are supplied through the deployment environment and are never
-committed.
+The public UI is deployed as a Cloudflare Worker-compatible vinext app. The
+Python worker receives optional NVIDIA and Backblaze B2 credentials through its
+runtime environment; credentials are never committed. Without those values,
+the worker and dashboard remain usable in visibly labeled fixture mode.

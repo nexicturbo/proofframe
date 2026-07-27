@@ -1,0 +1,3 @@
+genblaze-core>=0.6.0,<0.7
+genblaze-s3>=0.6.0,<0.7
+genblaze-nvidia>=0.6.0,<0.7

@@ -1,0 +1,36 @@
+{
+  "schema": "proofframe.demo.v1",
+  "demo": true,
+  "run_id": "pf_2026_07_2847",
+  "project_id": "proofframe",
+  "workflow": "generate-evaluate-refine-release",
+  "acceptance_policy": "brand-launch-v4.json",
+  "passed": true,
+  "attempts": [
+    {
+      "index": 1,
+      "score": 0.74,
+      "passed": false,
+      "feedback": "Increase headline contrast above 4.5:1."
+    },
+    {
+      "index": 2,
+      "score": 0.86,
+      "passed": false,
+      "feedback": "Move the wordmark 48 pixels inside the safe zone."
+    },
+    {
+      "index": 3,
+      "score": 0.96,
+      "passed": true,
+      "feedback": null
+    }
+  ],
+  "release": {
+    "storage": "Backblaze B2",
+    "key_strategy": "content-addressable",
+    "object": "proofframe/assets/6f/91/6f91c2ae-demo.png",
+    "manifest": "proofframe/manifests/pf_2026_07_2847.json"
+  },
+  "note": "Public demonstration record. Live runs replace this fixture with the canonical Genblaze manifest."
+}

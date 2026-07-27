@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/.venv/
 /.pnp
 .pnp.*
 .yarn/*
@@ -41,4 +42,6 @@ next-env.d.ts
 /dist/
 /.wrangler/
 /outputs/
+/output/
+/video-assets/
 /work/

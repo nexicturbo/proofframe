@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: python -m pip install -r requirements.txt
+      - run: python services/proofframe_pipeline.py --out fixture-proof.json
+      - name: Verify the Genblaze fixture proof
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          proof = json.loads(Path("fixture-proof.json").read_text())
+          assert proof["mode"] == "fixture"
+          assert proof["passed"] is True
+          assert proof["manifest_verified"] is True
+          assert proof["b2_released"] is False
+          assert len(proof["iterations"]) == 3
+          assert [item["score"] for item in proof["iterations"]] == [0.74, 0.86, 0.96]
+          assert proof["iterations"][0]["parent_run_id"] is None
+          assert proof["iterations"][1]["parent_run_id"] == proof["iterations"][0]["run_id"]
+          assert proof["iterations"][2]["parent_run_id"] == proof["iterations"][1]["run_id"]
+          PY

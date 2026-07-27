@@ -40,6 +40,34 @@ The repository includes an honest fixture mode for local demos without
 credentials. Fixture runs are labeled and never claim a B2 upload. Live mode is
 enabled only when the NVIDIA and B2 runtime credentials are present.
 
+## Providers and models
+
+- **Reproducible judging path:** Genblaze `MockProvider`
+  (`proofframe-fixture`) with the labeled `fixture-image-v1` model. It exercises
+  the same `AgentLoop`, evaluator, retry lineage, canonical manifest, and
+  release decision without requiring judges to supply credentials.
+- **Production generation path:** Genblaze's NVIDIA connector with NVIDIA NIM
+  model `stabilityai/stable-diffusion-3-5-large` by default. The model can be
+  changed through `PROOFFRAME_MODEL`.
+- **Evidence-storage path:** Genblaze's S3 connector configured through
+  `S3StorageBackend.for_backblaze`, then wrapped in an `ObjectStorageSink` that
+  uses content-addressable keys in Backblaze B2.
+
+## Reproducibility
+
+The current repository was revalidated from a clean checkout with:
+
+```bash
+npm test
+.venv/Scripts/python.exe services/proofframe_pipeline.py
+```
+
+The web build and both server-rendering tests pass. The Python run produces
+three parent-linked attempts (0.74, 0.86, and 0.96), promotes only the passing
+third candidate, and verifies the canonical manifest hash. In fixture mode it
+reports `b2_released: false`; with the documented B2 credentials present, the
+same release step writes the accepted asset and evidence manifest to B2.
+
 ## Challenges
 
 The main challenge was preserving useful evidence across retries. A final image

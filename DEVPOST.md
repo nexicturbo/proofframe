@@ -81,3 +81,4 @@ instead of transient application state.
 
 - Source: https://github.com/nexicturbo/proofframe
 - Live app: https://proofframe-control.nexicturbo.chatgpt.site
+- Demo video: https://drive.google.com/file/d/1zeL22feKA4hRFm0riEujAn7SmyHQk4Gf/view?usp=sharing

@@ -19,8 +19,8 @@ iteration budget is exhausted.
 
 Every attempt remains visible. The dashboard compares candidates, rejection
 reasons, per-check scores, latency, and cost. The accepted asset, evaluator
-report, and canonical Genblaze manifest are committed to Backblaze B2 with
-content-addressed keys. Reviewers can verify the final SHA-256 and walk the
+report, and canonical Genblaze manifest use content-addressed keys on the
+Backblaze B2 release path. Reviewers can verify the final SHA-256 and walk the
 parent-linked lineage back to the original run.
 
 ## How we built it
@@ -35,6 +35,9 @@ parent-linked lineage back to the original run.
   paths for assets and manifests
 - **ProofFrame UI** — a responsive TypeScript control room deployed as a
   Cloudflare Worker-compatible app
+- **Artifact-derived policy** — Pillow generates three deterministic PNG
+  candidates, then measures WCAG contrast, safe-zone inset, brand colors,
+  greenhouse pixels, dimensions, and SHA-256 directly from the image bytes
 
 The repository includes an honest fixture mode for local demos without
 credentials. Fixture runs are labeled and never claim a B2 upload. Live mode is
@@ -62,11 +65,13 @@ npm test
 .venv/Scripts/python.exe services/proofframe_pipeline.py
 ```
 
-The web build and both server-rendering tests pass. The Python run produces
-three parent-linked attempts (0.74, 0.86, and 0.96), promotes only the passing
-third candidate, and verifies the canonical manifest hash. In fixture mode it
-reports `b2_released: false`; with the documented B2 credentials present, the
-same release step writes the accepted asset and evidence manifest to B2.
+The web build, server-rendering tests, and artifact-policy regression test pass.
+The Python run produces three parent-linked attempts with measured scores of
+0.76, 0.89, and 1.00. Attempt one records a 2.33:1 contrast failure, attempt two
+records a 14px safe-zone failure, and only the third candidate passes. The final
+artifact has a reproducible SHA-256 and a verified canonical Genblaze manifest.
+In fixture mode it reports `b2_released: false`; with the documented B2
+credentials present, the same release step writes the evidence to B2.
 
 ## Challenges
 
@@ -82,7 +87,7 @@ when a reviewer does not have provider credentials.
 ## Accomplishments
 
 - A quality-gated generation loop that actually refines and retries
-- Six explicit policy checks instead of an opaque “looks good” score
+- Six artifact-derived policy checks instead of an opaque or hard-coded score
 - Parent-linked Genblaze manifests for every candidate
 - SHA-256 verification and content-addressed B2 object layout
 - A public control room that makes the system understandable in under a minute
@@ -109,4 +114,4 @@ instead of transient application state.
 
 - Source: https://github.com/nexicturbo/proofframe
 - Live app: https://proofframe-control.nexicturbo.chatgpt.site
-- Demo video: https://drive.google.com/file/d/1zeL22feKA4hRFm0riEujAn7SmyHQk4Gf/view?usp=sharing
+- Demo video: https://youtu.be/lhfgRgM9kgQ

@@ -1,3 +1,4 @@
 genblaze-core>=0.3.7,<0.4
 genblaze-s3>=0.3.6,<0.4
 genblaze-nvidia>=0.3.2,<0.4
+Pillow>=10.1,<12

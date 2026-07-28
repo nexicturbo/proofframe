@@ -1,33 +1,33 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 type RunState = "ready" | "running" | "verified";
 
 const candidates = [
   {
     id: "01",
-    score: 74,
+    score: 76,
     status: "rejected",
-    note: "Headline contrast below 4.5:1",
+    note: "Measured contrast: 2.33:1",
     cost: "$0.018",
     time: "8.4s",
     tone: "violet",
   },
   {
     id: "02",
-    score: 86,
+    score: 89,
     status: "refined",
-    note: "Logo safe-zone clipped by 6px",
+    note: "Measured wordmark inset: 14px",
     cost: "$0.019",
     time: "8.1s",
     tone: "coral",
   },
   {
     id: "03",
-    score: 96,
+    score: 100,
     status: "accepted",
-    note: "All policy checks passed",
+    note: "All byte-derived checks passed",
     cost: "$0.020",
     time: "7.8s",
     tone: "mint",
@@ -44,8 +44,8 @@ const trace = [
   {
     index: "02",
     label: "Evaluate",
-    detail: "brand-policy.json",
-    meta: "6 checks",
+    detail: "pixel-policy-v1",
+    meta: "6 measured checks",
   },
   {
     index: "03",
@@ -63,26 +63,19 @@ const trace = [
 
 const checks = [
   ["Typography legibility", "100", "pass"],
-  ["Brand palette match", "98", "pass"],
-  ["Safe-zone compliance", "96", "pass"],
-  ["Required object present", "94", "pass"],
-  ["Prompt fidelity", "92", "pass"],
+  ["Brand palette match", "99", "pass"],
+  ["Safe-zone compliance", "100", "pass"],
+  ["Required object present", "100", "pass"],
+  ["Prompt fidelity", "100", "pass"],
   ["Content safety", "100", "pass"],
 ];
 
 export default function Home() {
   const [runState, setRunState] = useState<RunState>("verified");
-  const [prompt, setPrompt] = useState(
-    "Editorial launch poster for an orbital greenhouse, deep navy field, warm red horizon, crisp product typography",
-  );
-  const [strictMode, setStrictMode] = useState(true);
   const [activeCandidate, setActiveCandidate] = useState(2);
-  const [runNumber, setRunNumber] = useState(2847);
-
-  const runId = useMemo(
-    () => `pf_2026_07_${String(runNumber).padStart(4, "0")}`,
-    [runNumber],
-  );
+  const runId = "37e3f01a";
+  const prompt =
+    "Editorial launch poster for an orbital greenhouse, deep navy field, warm red horizon, crisp product typography";
 
   function runProof() {
     if (runState === "running") return;
@@ -91,16 +84,15 @@ export default function Home() {
     window.setTimeout(() => setActiveCandidate(1), 420);
     window.setTimeout(() => setActiveCandidate(2), 840);
     window.setTimeout(() => {
-      setRunNumber((value) => value + 1);
       setRunState("verified");
     }, 1260);
   }
 
   const stateLabel =
     runState === "running"
-      ? "Agent loop running"
+      ? "Replaying measured proof"
       : runState === "verified"
-        ? "Manifest verified"
+        ? "Pixel policy verified"
         : "Ready to generate";
 
   return (
@@ -144,7 +136,7 @@ export default function Home() {
             <span className="stat-label">attempts</span>
           </div>
           <div>
-            <span className="stat-value">96</span>
+            <span className="stat-value">100</span>
             <span className="stat-label">quality score</span>
           </div>
           <div>
@@ -174,7 +166,7 @@ export default function Home() {
           <textarea
             id="creative-brief"
             value={prompt}
-            onChange={(event) => setPrompt(event.target.value)}
+            readOnly
             rows={5}
           />
 
@@ -217,8 +209,8 @@ export default function Home() {
             <label className="strict-toggle">
               <input
                 type="checkbox"
-                checked={strictMode}
-                onChange={(event) => setStrictMode(event.target.checked)}
+                checked
+                readOnly
               />
               <span className="toggle-track" aria-hidden="true">
                 <span />
@@ -231,7 +223,9 @@ export default function Home() {
               onClick={runProof}
               disabled={runState === "running" || prompt.trim().length < 8}
             >
-              <span>{runState === "running" ? "Running proof" : "Run proof"}</span>
+              <span>
+                {runState === "running" ? "Replaying proof" : "Replay measured proof"}
+              </span>
               <span aria-hidden="true">↗</span>
             </button>
           </div>
@@ -309,7 +303,7 @@ export default function Home() {
               promoted to the release path.
             </p>
           </div>
-          <span className="hash-chip">SHA256 · 6f91…c2ae</span>
+          <span className="hash-chip">SHA256 · d1fa…0d21</span>
         </div>
 
         <div className="trace-rail">
@@ -362,29 +356,29 @@ export default function Home() {
               <h2>B2 release manifest</h2>
             </div>
             <span className="manifest-status">
-              <span className="status-dot" /> VERIFIED
+              <span className="status-dot" /> DEMO VERIFIED
             </span>
           </div>
           <dl>
             <div>
               <dt>Bucket</dt>
-              <dd>proofframe-production</dd>
+              <dd>Configured at live runtime</dd>
             </div>
             <div>
               <dt>Object</dt>
-              <dd>assets/6f/91/6f91c2ae…e2.png</dd>
+              <dd>content-addressed after B2 upload</dd>
             </div>
             <div>
               <dt>Manifest</dt>
-              <dd>manifests/{runId}.json</dd>
+              <dd>/manifest-demo.json</dd>
             </div>
             <div>
               <dt>Lineage</dt>
-              <dd>root → 8ce1 → 19fd → 6f91</dd>
+              <dd>root → 3422 → a770 → 37e3</dd>
             </div>
             <div>
-              <dt>Retention</dt>
-              <dd>Object Lock · 30 days</dd>
+              <dt>Storage status</dt>
+              <dd>Fixture record · no upload claimed</dd>
             </div>
           </dl>
           <a
@@ -411,7 +405,7 @@ export default function Home() {
         </div>
         <p>
           Powered by <strong>Genblaze</strong> orchestration and{" "}
-          <strong>Backblaze B2</strong> evidence storage.
+          <strong>Backblaze B2</strong> release integration.
         </p>
         <span>BUILD 0.9.0 · 2026</span>
       </footer>

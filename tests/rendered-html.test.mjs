@@ -39,6 +39,8 @@ test("server-renders the ProofFrame control room", async () => {
   assert.match(html, /Genblaze × B2/);
   assert.match(html, /B2 release manifest/);
   assert.match(html, /brand-launch-v4\.json/);
+  assert.match(html, /pixel-policy-v1/);
+  assert.match(html, /no upload claimed/i);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });
 

@@ -1,36 +1,88 @@
 {
-  "schema": "proofframe.demo.v1",
-  "demo": true,
-  "run_id": "pf_2026_07_2847",
-  "project_id": "proofframe",
-  "workflow": "generate-evaluate-refine-release",
-  "acceptance_policy": "brand-launch-v4.json",
+  "run_id": "37e3f01a-f36c-4dc6-9992-05e17931948c",
   "passed": true,
-  "attempts": [
+  "mode": "fixture",
+  "iterations": [
     {
       "index": 1,
-      "score": 0.74,
+      "run_id": "3422db62-4869-4c7f-b711-12482a677821",
+      "parent_run_id": null,
+      "score": 0.76,
       "passed": false,
-      "feedback": "Increase headline contrast above 4.5:1."
+      "feedback": "Increase headline contrast above 4.5:1.",
+      "checks": {
+        "typography_legibility": 52,
+        "brand_palette_match": 79,
+        "safe_zone_compliance": 100,
+        "required_object_present": 100,
+        "prompt_fidelity": 81,
+        "content_safety": 100
+      },
+      "measurements": {
+        "artifact_sha256": "2a9d39c9c61eba57f4a9e38db8d092b4e500e076855f8ffa574142c2b3f2f2a5",
+        "dimensions": "1280x720",
+        "contrast_ratio": 2.33,
+        "wordmark_inset_px": 64,
+        "greenhouse_pixels": 15380,
+        "evaluator": "proofframe-pixel-policy-v1"
+      }
     },
     {
       "index": 2,
-      "score": 0.86,
+      "run_id": "a7708fcd-c381-494c-867b-ec1091ded049",
+      "parent_run_id": "3422db62-4869-4c7f-b711-12482a677821",
+      "score": 0.89,
       "passed": false,
-      "feedback": "Move the wordmark 48 pixels inside the safe zone."
+      "feedback": "Move the wordmark at least 48 pixels inside the safe zone.",
+      "checks": {
+        "typography_legibility": 100,
+        "brand_palette_match": 99,
+        "safe_zone_compliance": 29,
+        "required_object_present": 100,
+        "prompt_fidelity": 100,
+        "content_safety": 100
+      },
+      "measurements": {
+        "artifact_sha256": "2b9c5f1da87328bb9aeb32130f7341bdcbafd8c58874d21c686f5ad2f06777bc",
+        "dimensions": "1280x720",
+        "contrast_ratio": 15.85,
+        "wordmark_inset_px": 14,
+        "greenhouse_pixels": 15380,
+        "evaluator": "proofframe-pixel-policy-v1"
+      }
     },
     {
       "index": 3,
-      "score": 0.96,
+      "run_id": "37e3f01a-f36c-4dc6-9992-05e17931948c",
+      "parent_run_id": "a7708fcd-c381-494c-867b-ec1091ded049",
+      "score": 1.0,
       "passed": true,
-      "feedback": null
+      "feedback": null,
+      "checks": {
+        "typography_legibility": 100,
+        "brand_palette_match": 99,
+        "safe_zone_compliance": 100,
+        "required_object_present": 100,
+        "prompt_fidelity": 100,
+        "content_safety": 100
+      },
+      "measurements": {
+        "artifact_sha256": "d1fa1ce0176d5acb9829d894d7a51e82a58b4f69c9ad17aaf7d64712a5f80d21",
+        "dimensions": "1280x720",
+        "contrast_ratio": 15.85,
+        "wordmark_inset_px": 64,
+        "greenhouse_pixels": 15380,
+        "evaluator": "proofframe-pixel-policy-v1"
+      }
     }
   ],
+  "total_cost_usd": 0.057,
+  "manifest_hash": "d6a1d743337f3ec8ba133e5cae085d965c4b746028e5a097fb3a8482343c1623",
+  "manifest_verified": true,
+  "b2_released": false,
   "release": {
     "storage": "Backblaze B2",
-    "key_strategy": "content-addressable",
-    "object": "proofframe/assets/6f/91/6f91c2ae-demo.png",
-    "manifest": "proofframe/manifests/pf_2026_07_2847.json"
-  },
-  "note": "Public demonstration record. Live runs replace this fixture with the canonical Genblaze manifest."
+    "status": "fixture_not_uploaded",
+    "key_strategy": "content-addressable"
+  }
 }

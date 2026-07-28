@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -19,6 +18,11 @@ from genblaze_core import (
     Pipeline,
 )
 
+from artifact_evaluator import (
+    evaluate_artifact,
+    file_url_to_path,
+    generate_fixture_candidate,
+)
 from b2_release import create_b2_sink
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,20 +30,27 @@ DEFAULT_BRIEF = (
     "Editorial launch poster for an orbital greenhouse, deep navy field, "
     "warm red horizon, crisp product typography"
 )
-ATTEMPT_SCORES = (0.74, 0.86, 0.96)
 
 
-def _fixture_asset(step: Any) -> list[Asset]:
-    """Use the project share card as an honest, offline fixture asset."""
+def _fixture_asset(step: Any, output_dir: Path) -> list[Asset]:
+    """Generate a distinct, measurable artifact for each offline attempt."""
 
-    path = ROOT / "public" / "og.png"
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    attempt = int(step.params.get("_attempt", 0))
+    path = generate_fixture_candidate(
+        output_dir / f"fixture-candidate-{attempt + 1}.png",
+        attempt,
+    )
+    report = evaluate_artifact(path)
     return [
         Asset(
             url=path.as_uri(),
             media_type="image/png",
-            sha256=digest,
-            metadata={"fixture": True, "attempt": step.params.get("_attempt", 0)},
+            sha256=report["measurements"]["artifact_sha256"],
+            metadata={
+                "fixture": True,
+                "attempt": attempt,
+                "evaluator": report["measurements"]["evaluator"],
+            },
         )
     ]
 
@@ -59,25 +70,13 @@ def _provider(output_dir: Path) -> tuple[Any, str, str]:
     return (
         MockProvider(
             name="proofframe-fixture",
-            assets=_fixture_asset,
+            assets=lambda step: _fixture_asset(step, output_dir),
             latency=0.04,
             cost_usd=0.019,
         ),
         "fixture-image-v1",
         "fixture",
     )
-
-
-def _checks_for_attempt(attempt: int) -> dict[str, int]:
-    score = round(ATTEMPT_SCORES[min(attempt, len(ATTEMPT_SCORES) - 1)] * 100)
-    return {
-        "typography_legibility": min(100, score + 4),
-        "brand_palette_match": min(100, score + 2),
-        "safe_zone_compliance": score,
-        "required_object_present": min(100, score + 1),
-        "prompt_fidelity": max(0, score - 4),
-        "content_safety": 100,
-    }
 
 
 def build_loop(brief: str, *, strict: bool = True) -> tuple[AgentLoop, str]:
@@ -112,22 +111,29 @@ def build_loop(brief: str, *, strict: bool = True) -> tuple[AgentLoop, str]:
         )
 
     def evaluate(result: Any) -> EvaluationResult:
-        attempt = int(result.run.steps[-1].params.get("_attempt", 0))
-        score = ATTEMPT_SCORES[min(attempt, len(ATTEMPT_SCORES) - 1)]
-        passed = score >= threshold
-        feedback_by_attempt = (
-            "Increase headline contrast above 4.5:1 and preserve the dark navy field.",
-            "Move the wordmark 48 pixels inside the safe zone.",
-            None,
-        )
+        asset = result.run.steps[-1].assets[0]
+        report = evaluate_artifact(file_url_to_path(asset.url))
+        checks = report["checks"]
+        score = report["score"] / 100
+        required_floor = 90 if strict else 80
+        passed = score >= threshold and min(checks.values()) >= required_floor
+        failures: list[str] = []
+        if checks["typography_legibility"] < required_floor:
+            failures.append("Increase headline contrast above 4.5:1.")
+        if checks["safe_zone_compliance"] < required_floor:
+            failures.append("Move the wordmark at least 48 pixels inside the safe zone.")
+        if checks["required_object_present"] < required_floor:
+            failures.append("Make the greenhouse structure more visually explicit.")
+        feedback = " ".join(failures) if failures else None
         return EvaluationResult(
             passed=passed,
             score=score,
-            feedback=feedback_by_attempt[min(attempt, 2)] if not passed else None,
+            feedback=feedback if not passed else None,
             metadata={
                 "threshold": threshold,
                 "policy": "brand-launch-v4.json",
-                "checks": _checks_for_attempt(attempt),
+                "checks": checks,
+                "measurements": report["measurements"],
             },
         )
 
@@ -168,6 +174,7 @@ def run_proof(brief: str, *, strict: bool = True) -> dict[str, Any]:
             "passed": iteration.evaluation.passed,
             "feedback": iteration.evaluation.feedback,
             "checks": iteration.evaluation.metadata.get("checks", {}),
+            "measurements": iteration.evaluation.metadata.get("measurements", {}),
         }
         for iteration in result.iterations
     ]
@@ -176,10 +183,15 @@ def run_proof(brief: str, *, strict: bool = True) -> dict[str, Any]:
         "passed": result.passed,
         "mode": mode,
         "iterations": iterations,
-        "total_cost_usd": result.total_cost_usd,
+        "total_cost_usd": round(result.total_cost_usd, 6),
         "manifest_hash": final.manifest.canonical_hash,
         "manifest_verified": final.manifest.verify(),
         "b2_released": sink is not None,
+        "release": {
+            "storage": "Backblaze B2",
+            "status": "uploaded" if sink is not None else "fixture_not_uploaded",
+            "key_strategy": "content-addressable",
+        },
     }
 
 

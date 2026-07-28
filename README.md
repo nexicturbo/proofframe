@@ -49,6 +49,27 @@ zone, and attempt three passes all six checks. It verifies the parent-linked
 manifest chain and reports `b2_released: false` rather than pretending that an
 upload occurred.
 
+## Live Backblaze B2 release
+
+The reference run `d9918cc2-f90e-429f-b163-f2c23ae3388a` completed the same
+three-attempt loop with the B2 sink enabled. It uploaded the three
+content-addressed PNGs and their parent-linked canonical manifests to the
+private evidence bucket `proofframe-genblaze-turbonexic-2026` in
+`us-east-005`. The final asset is stored at:
+
+```text
+proofframe/assets/d1/fa/d1fa1ce0176d5acb9829d894d7a51e82a58b4f69c9ad17aaf7d64712a5f80d21.png
+```
+
+The final canonical manifest is stored at:
+
+```text
+proofframe/manifests/d9918cc2-f90e-429f-b163-f2c23ae3388a.json
+```
+
+The public dashboard exposes the release summary, exact object keys, SHA-256
+values, and byte-identical review mirrors without exposing B2 credentials.
+
 ## Architecture
 
 - `app/` — public ProofFrame control-room UI
@@ -60,4 +81,6 @@ upload occurred.
 The public UI is deployed as a Cloudflare Worker-compatible vinext app. The
 Python worker receives optional NVIDIA and Backblaze B2 credentials through its
 runtime environment; credentials are never committed. Without those values,
-the worker and dashboard remain usable in visibly labeled fixture mode.
+the worker and dashboard remain usable in visibly labeled fixture mode. The
+checked-in reference manifest records a real B2 release while keeping the
+private bucket and scoped application key out of the client bundle.

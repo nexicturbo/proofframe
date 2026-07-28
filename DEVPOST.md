@@ -43,6 +43,12 @@ The repository includes an honest fixture mode for local demos without
 credentials. Fixture runs are labeled and never claim a B2 upload. Live mode is
 enabled only when the NVIDIA and B2 runtime credentials are present.
 
+The submitted reference run was also executed with a real Backblaze B2 sink.
+Run `d9918cc2-f90e-429f-b163-f2c23ae3388a` uploaded all three candidates and
+their parent-linked manifests to a scoped `us-east-005` bucket. The dashboard's
+release manifest publishes the exact B2 object keys, sizes, and SHA-256 values,
+plus byte-identical review mirrors, while the bucket itself remains private.
+
 ## Providers and models
 
 - **Reproducible judging path:** Genblaze `MockProvider`
@@ -65,13 +71,14 @@ npm test
 .venv/Scripts/python.exe services/proofframe_pipeline.py
 ```
 
-The web build, server-rendering tests, and artifact-policy regression test pass.
+The web build, server-rendering tests, artifact-policy regressions, and live B2
+release pass.
 The Python run produces three parent-linked attempts with measured scores of
 0.76, 0.89, and 1.00. Attempt one records a 2.33:1 contrast failure, attempt two
 records a 14px safe-zone failure, and only the third candidate passes. The final
 artifact has a reproducible SHA-256 and a verified canonical Genblaze manifest.
-In fixture mode it reports `b2_released: false`; with the documented B2
-credentials present, the same release step writes the evidence to B2.
+The reference release reports `b2_released: true`; the same command without
+credentials remains an honest local fixture and reports `false`.
 
 ## Challenges
 

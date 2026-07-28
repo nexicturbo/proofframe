@@ -1,11 +1,11 @@
 {
-  "run_id": "37e3f01a-f36c-4dc6-9992-05e17931948c",
+  "run_id": "d9918cc2-f90e-429f-b163-f2c23ae3388a",
   "passed": true,
   "mode": "fixture",
   "iterations": [
     {
       "index": 1,
-      "run_id": "3422db62-4869-4c7f-b711-12482a677821",
+      "run_id": "c1e33d0b-8a14-48c9-9082-200f1f665808",
       "parent_run_id": null,
       "score": 0.76,
       "passed": false,
@@ -29,8 +29,8 @@
     },
     {
       "index": 2,
-      "run_id": "a7708fcd-c381-494c-867b-ec1091ded049",
-      "parent_run_id": "3422db62-4869-4c7f-b711-12482a677821",
+      "run_id": "e973079b-702b-4737-a7ed-27033415fed0",
+      "parent_run_id": "c1e33d0b-8a14-48c9-9082-200f1f665808",
       "score": 0.89,
       "passed": false,
       "feedback": "Move the wordmark at least 48 pixels inside the safe zone.",
@@ -53,8 +53,8 @@
     },
     {
       "index": 3,
-      "run_id": "37e3f01a-f36c-4dc6-9992-05e17931948c",
-      "parent_run_id": "a7708fcd-c381-494c-867b-ec1091ded049",
+      "run_id": "d9918cc2-f90e-429f-b163-f2c23ae3388a",
+      "parent_run_id": "e973079b-702b-4737-a7ed-27033415fed0",
       "score": 1.0,
       "passed": true,
       "feedback": null,
@@ -77,12 +77,42 @@
     }
   ],
   "total_cost_usd": 0.057,
-  "manifest_hash": "d6a1d743337f3ec8ba133e5cae085d965c4b746028e5a097fb3a8482343c1623",
+  "manifest_hash": "0594d6dd332c82a647cf15045dea8ab8a10759def445ed0a25e8f6d0d4439932",
   "manifest_verified": true,
-  "b2_released": false,
+  "b2_released": true,
   "release": {
     "storage": "Backblaze B2",
-    "status": "fixture_not_uploaded",
-    "key_strategy": "content-addressable"
+    "status": "uploaded",
+    "bucket": "proofframe-genblaze-turbonexic-2026",
+    "bucket_id": "048caf448b45a08791f50116",
+    "bucket_type": "private",
+    "region": "us-east-005",
+    "endpoint": "s3.us-east-005.backblazeb2.com",
+    "key_strategy": "content-addressable",
+    "artifact_objects": [
+      {
+        "attempt": 1,
+        "key": "proofframe/assets/2a/9d/2a9d39c9c61eba57f4a9e38db8d092b4e500e076855f8ffa574142c2b3f2f2a5.png",
+        "size_bytes": 36137,
+        "public_mirror": "/evidence/attempt-1.png"
+      },
+      {
+        "attempt": 2,
+        "key": "proofframe/assets/2b/9c/2b9c5f1da87328bb9aeb32130f7341bdcbafd8c58874d21c686f5ad2f06777bc.png",
+        "size_bytes": 38215,
+        "public_mirror": "/evidence/attempt-2.png"
+      },
+      {
+        "attempt": 3,
+        "key": "proofframe/assets/d1/fa/d1fa1ce0176d5acb9829d894d7a51e82a58b4f69c9ad17aaf7d64712a5f80d21.png",
+        "size_bytes": 38313,
+        "public_mirror": "/evidence/attempt-3.png"
+      }
+    ],
+    "manifest_objects": [
+      "proofframe/manifests/c1e33d0b-8a14-48c9-9082-200f1f665808.json",
+      "proofframe/manifests/e973079b-702b-4737-a7ed-27033415fed0.json",
+      "proofframe/manifests/d9918cc2-f90e-429f-b163-f2c23ae3388a.json"
+    ]
   }
 }

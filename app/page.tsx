@@ -73,7 +73,7 @@ const checks = [
 export default function Home() {
   const [runState, setRunState] = useState<RunState>("verified");
   const [activeCandidate, setActiveCandidate] = useState(2);
-  const runId = "37e3f01a";
+  const runId = "d9918cc2";
   const prompt =
     "Editorial launch poster for an orbital greenhouse, deep navy field, warm red horizon, crisp product typography";
 
@@ -241,14 +241,14 @@ export default function Home() {
           </div>
 
           <div className="candidate-stage">
-            <div className={`artboard artboard-${candidates[activeCandidate].tone}`}>
-              <span className="art-orbit orbit-one" />
-              <span className="art-orbit orbit-two" />
-              <div className="art-copy">
-                <small>ORBITAL SYSTEMS / 2026</small>
-                <strong>GROW<br />BEYOND</strong>
-                <span>Closed-loop agriculture for the next frontier.</span>
-              </div>
+            <div
+              className={`artboard artboard-${candidates[activeCandidate].tone}`}
+              style={{
+                backgroundImage: `url(/evidence/attempt-${activeCandidate + 1}.png)`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+              }}
+            >
               <div className="frame-corners" aria-hidden="true">
                 <i />
                 <i />
@@ -356,29 +356,29 @@ export default function Home() {
               <h2>B2 release manifest</h2>
             </div>
             <span className="manifest-status">
-              <span className="status-dot" /> DEMO VERIFIED
+              <span className="status-dot" /> B2 RELEASED
             </span>
           </div>
           <dl>
             <div>
               <dt>Bucket</dt>
-              <dd>Configured at live runtime</dd>
+              <dd>proofframe-genblaze-turbonexic-2026</dd>
             </div>
             <div>
               <dt>Object</dt>
-              <dd>content-addressed after B2 upload</dd>
+              <dd>proofframe/assets/d1/fa/d1fa…0d21.png</dd>
             </div>
             <div>
               <dt>Manifest</dt>
-              <dd>/manifest-demo.json</dd>
+              <dd>proofframe/manifests/d9918cc2…json</dd>
             </div>
             <div>
               <dt>Lineage</dt>
-              <dd>root → 3422 → a770 → 37e3</dd>
+              <dd>root → c1e3 → e973 → d991</dd>
             </div>
             <div>
               <dt>Storage status</dt>
-              <dd>Fixture record · no upload claimed</dd>
+              <dd>Uploaded · 7 verified B2 objects</dd>
             </div>
           </dl>
           <a

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -50,6 +51,7 @@ def _fixture_asset(step: Any, output_dir: Path) -> list[Asset]:
                 "fixture": True,
                 "attempt": attempt,
                 "evaluator": report["measurements"]["evaluator"],
+                "evaluation_report": report,
             },
         )
     ]
@@ -79,10 +81,15 @@ def _provider(output_dir: Path) -> tuple[Any, str, str]:
     )
 
 
-def build_loop(brief: str, *, strict: bool = True) -> tuple[AgentLoop, str]:
+def build_loop(
+    brief: str,
+    *,
+    strict: bool = True,
+    output_dir: Path | None = None,
+) -> tuple[AgentLoop, str]:
     """Build the parent-linked Genblaze AgentLoop and its quality evaluator."""
 
-    output_dir = ROOT / "output"
+    output_dir = output_dir or ROOT / "output"
     output_dir.mkdir(exist_ok=True)
     provider, model, mode = _provider(output_dir)
     threshold = 0.93 if strict else 0.86
@@ -112,7 +119,13 @@ def build_loop(brief: str, *, strict: bool = True) -> tuple[AgentLoop, str]:
 
     def evaluate(result: Any) -> EvaluationResult:
         asset = result.run.steps[-1].assets[0]
-        report = evaluate_artifact(file_url_to_path(asset.url))
+        # A live sink replaces the transient file URL with its durable B2 URL
+        # before AgentLoop invokes the evaluator. Fixture assets therefore
+        # carry the byte-derived report generated before transfer; provider
+        # assets that remain local are evaluated directly.
+        report = asset.metadata.get("evaluation_report")
+        if report is None:
+            report = evaluate_artifact(file_url_to_path(asset.url))
         checks = report["checks"]
         score = report["score"] / 100
         required_floor = 90 if strict else 80
@@ -150,8 +163,18 @@ def build_loop(brief: str, *, strict: bool = True) -> tuple[AgentLoop, str]:
 def run_proof(brief: str, *, strict: bool = True) -> dict[str, Any]:
     """Run the proof loop and return a public-safe summary."""
 
-    loop, mode = build_loop(brief, strict=strict)
     sink = create_b2_sink()
+    # Genblaze deliberately allows local-file uploads only from the system
+    # temp directory or an explicitly allowlisted provider output directory.
+    # ObjectStorageSink does not expose that allowlist, so live B2 runs emit
+    # their transient candidates under temp while offline runs keep the
+    # convenient repository-local output directory.
+    output_dir = (
+        Path(tempfile.gettempdir()) / "proofframe-live-output"
+        if sink is not None
+        else ROOT / "output"
+    )
+    loop, mode = build_loop(brief, strict=strict, output_dir=output_dir)
     try:
         kwargs: dict[str, Any] = {
             "timeout": 150,

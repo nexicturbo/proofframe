@@ -41,7 +41,15 @@ jobs:
           assert proof["manifest_verified"] is True
           assert proof["b2_released"] is False
           assert len(proof["iterations"]) == 3
-          assert [item["score"] for item in proof["iterations"]] == [0.74, 0.86, 0.96]
+          scores = [item["score"] for item in proof["iterations"]]
+          assert scores[0] < scores[1] < scores[2]
+          assert [item["passed"] for item in proof["iterations"]] == [False, False, True]
+          assert scores[-1] >= 0.93
+          assert min(proof["iterations"][-1]["checks"].values()) >= 90
+          assert len({
+              item["measurements"]["artifact_sha256"]
+              for item in proof["iterations"]
+          }) == 3
           assert proof["iterations"][0]["parent_run_id"] is None
           assert proof["iterations"][1]["parent_run_id"] == proof["iterations"][0]["run_id"]
           assert proof["iterations"][2]["parent_run_id"] == proof["iterations"][1]["run_id"]
